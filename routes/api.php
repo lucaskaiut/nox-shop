@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Company\Http\Controllers\CompanyController;
+use App\Modules\Customer\Http\Controllers\AddressController;
 use App\Modules\Customer\Http\Controllers\CustomerController;
 use App\Modules\User\Http\Controllers\UserController;
 use Illuminate\Http\Request;

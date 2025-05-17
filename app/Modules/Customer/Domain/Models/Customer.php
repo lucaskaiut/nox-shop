@@ -7,6 +7,7 @@ use App\Modules\Customer\Domain\Observers\CustomerObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 #[ObservedBy(CustomerObserver::class)]
@@ -26,5 +27,10 @@ class Customer extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(Address::class);
     }
 }
