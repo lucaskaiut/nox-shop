@@ -3,6 +3,7 @@
 namespace App\Modules\Customer\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerUpdateRequest extends FormRequest
 {
@@ -24,7 +25,13 @@ class CustomerUpdateRequest extends FormRequest
         return [
             'first_name' => 'sometimes',
             'last_name' => 'sometimes',
-            'email' => 'sometimes|email',
+            'email' => [
+                'sometimes',
+                'email',
+                Rule::unique('customers')
+                    ->where(fn ($query) => $query->where('company_id', app('company')->company()->id))
+                    ->ignore($this->route('id')),
+            ],
             'type' => 'sometimes|in:person,company',
             'document' => 'sometimes',
             'birthdate' => 'date|sometimes',

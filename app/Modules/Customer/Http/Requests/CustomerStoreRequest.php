@@ -3,6 +3,7 @@
 namespace App\Modules\Customer\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerStoreRequest extends FormRequest
 {
@@ -24,7 +25,12 @@ class CustomerStoreRequest extends FormRequest
         return [
             'first_name' => 'required',
             'last_name' => 'required',
-            'email' => 'required|email',
+            'email' => [
+                'required', 
+                'email',
+                Rule::unique('customers')
+                    ->where(fn ($query) => $query->where('company_id', app('company')->company()->id))
+            ],
             'password' => 'required',
             'type' => 'required|in:person,company',
             'document' => 'required',
