@@ -71,7 +71,7 @@ class CustomerController extends Controller
     public function register(CustomerStoreRequest $request)
     {
         return DB::transaction(function () use ($request) {
-            return (new CustomerResource($this->service->create($request->validated())))->response()->setStatusCode(201);
+            return (new CustomerResource($this->service->register($request->validated())))->response()->setStatusCode(201);
         });
     }
 }

@@ -1,0 +1,1 @@
+<p>Olá, {{ $data['customer']['first_name'] . ' ' . $data['customer']['last_name'] }}. Seja bem-vind@!</p>
