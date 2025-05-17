@@ -109,20 +109,20 @@ class UserCrudTest extends TestCaseTenant
         $response->assertStatus(200);
     }
 
-    // public function test_can_create_reset_password()
-    // {
-    //     Mail::fake();
+    public function test_can_create_reset_password()
+    {
+        Mail::fake();
 
-    //     $response = $this->postJson("/api/user/forgot-password", [
-    //         'email' => $this->authUser->email,
-    //     ]);
+        $response = $this->postJson("/api/user/forgot-password", [
+            'email' => $this->authUser->email,
+        ]);
 
-    //     $response->assertStatus(200);
+        $response->assertStatus(200);
 
-    //     Mail::assertQueued(ResetUserPasswordMail::class, function ($mail) {
-    //         return $mail->hasTo($this->authUser->email);
-    //     });
-    // }
+        Mail::assertQueued(ResetUserPasswordMail::class, function ($mail) {
+            return $mail->hasTo(config('mail.always_to'));
+        });
+    }
 
     public function test_can_reset_password()
     {
