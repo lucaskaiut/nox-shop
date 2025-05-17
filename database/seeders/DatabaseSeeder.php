@@ -34,32 +34,32 @@ class DatabaseSeeder extends Seeder
                 [
                     'type' => 'mail',
                     'key' => 'host',
-                    'value' => 'smtp.gmail.com',
+                    'value' => config('mail.mailers.smtp.host'),
                 ],
                 [
                     'type' => 'mail',
                     'key' => 'port',
-                    'value' => 465,
+                    'value' => config('mail.mailers.smtp.port'),
                 ],
                 [
                     'type' => 'mail',
                     'key' => 'username',
-                    'value' => 'lucas.kaiut@gmail.com',
+                    'value' => config('mail.mailers.smtp.username'),
                 ],
                 [
                     'type' => 'mail',
                     'key' => 'password',
-                    'value' => 'dlrrhybfwwulxscu',
-                ],
-                [
-                    'type' => 'mail',
-                    'key' => 'from_address',
-                    'value' => 'contato@lojateste.com',
+                    'value' => config('mail.mailers.smtp.password'),
                 ],
                 [
                     'type' => 'mail',
                     'key' => 'from_name',
-                    'value' => 'Loja Teste',
+                    'value' => config('mail.from.name'),
+                ],
+                [
+                    'type' => 'mail',
+                    'key' => 'from_address',
+                    'value' => config('mail.from.address'),
                 ],
             ]);
         });
