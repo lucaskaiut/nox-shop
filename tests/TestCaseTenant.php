@@ -28,6 +28,41 @@ abstract class TestCaseTenant extends BaseTestCase
 
         app('company')->registerCompany($this->company);
 
+        app(CompanyService::class)->update($this->company, [
+            'settings' => [
+                [
+                    'type' => 'mail',
+                    'key' => 'host',
+                    'value' => config('mail.mailers.smtp.host'),
+                ],
+                [
+                    'type' => 'mail',
+                    'key' => 'port',
+                    'value' => config('mail.mailers.smtp.port'),
+                ],
+                [
+                    'type' => 'mail',
+                    'key' => 'username',
+                    'value' => config('mail.mailers.smtp.username'),
+                ],
+                [
+                    'type' => 'mail',
+                    'key' => 'password',
+                    'value' => config('mail.mailers.smtp.password'),
+                ],
+                [
+                    'type' => 'mail',
+                    'key' => 'from_name',
+                    'value' => config('mail.from.name'),
+                ],
+                [
+                    'type' => 'mail',
+                    'key' => 'from_address',
+                    'value' => config('mail.from.address'),
+                ],
+            ],
+        ]);
+
         // Cria e autentica um usuário da company
         $this->authUser = User::create([
             'company_id' => $this->company->id,
