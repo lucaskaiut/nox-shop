@@ -1,0 +1,1 @@
+<p>Para redefinir sua senha, clique <a href="https://nox-shop.com/{{ $data['token'] }}" target="_blank">aqui</a></p>

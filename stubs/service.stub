@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Modules\Core\Domain\Traits\ServiceTrait;
+{{ model_import }}
+
+class {{ class }}
+{
+    {{ trait_assignment }}
+
+    {{ functions_assignment }}
+}
