@@ -2,13 +2,10 @@
 
 namespace App\Modules\Company\Domain\Models;
 
-use App\Modules\Company\Domain\Observers\SettingObserver;
 use App\Modules\Company\Domain\Scopes\CompanyGlobalScope;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[ObservedBy([SettingObserver::class])]
 class Setting extends Model
 {
     protected $guarded = [];

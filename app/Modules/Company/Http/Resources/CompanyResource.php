@@ -14,6 +14,14 @@ class CompanyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'domain' => $this->domain,
+            'contact_email' => $this->contact_email,
+            'settings' => new SettingCollection($this->settings()->get()),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
     }
 }

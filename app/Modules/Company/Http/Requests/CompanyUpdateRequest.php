@@ -22,10 +22,16 @@ class CompanyUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'accepted',
-            'domain' => 'accepted',
-            'document' => 'accepted',
-            'contact_email' => 'accepted|email',
+            'name' => 'sometimes',
+            'domain' => 'sometimes',
+            'document' => 'sometimes',
+            'contact_email' => 'sometimes|email',
+            'settings' => 'array|sometimes',
+            'settings.*.key' => 'required',
+            'settings.*.type' => 'required',
+            'settings.*.value' => 'required',
+            'settings.*.delete' => 'sometimes|boolean',
+            'settings.*.id' => 'sometimes',
         ];
     }
 }
