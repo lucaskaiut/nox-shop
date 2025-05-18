@@ -62,19 +62,5 @@ abstract class TestCaseTenant extends BaseTestCase
                 ],
             ],
         ]);
-
-        // Cria e autentica um usuário da company
-        $this->authUser = User::create([
-            'company_id' => $this->company->id,
-            'name' => 'Fulano de Tal',
-            'email' => 'fulanodetal@lojateste.com',
-            'password' => Hash::make('abc@123'),
-        ]);
-
-        $token = $this->authUser->createToken('testing')->plainTextToken;
-
-        $this->withHeader('Authorization', 'Bearer ' . $token);
-
-        $this->actingAs($this->authUser, 'sanctum');
     }
 }

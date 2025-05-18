@@ -17,5 +17,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::resource('customer', CustomerController::class)->parameters(['customer' => 'id'])->except(['create', 'edit']);
     Route::put('company', [CompanyController::class, 'update'])->name('company.update');
     Route::get('company', [CompanyController::class, 'show'])->name('company.show');
+    Route::resource('address', AddressController::class)->parameters(['address' => 'id'])->except(['create', 'edit']);
 });
 Route::post('customer/register', [CustomerController::class, 'register'])->name('customer.register');

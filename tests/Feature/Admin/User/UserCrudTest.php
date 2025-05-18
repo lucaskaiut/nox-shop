@@ -1,18 +1,17 @@
 <?php
 
-namespace Tests\Feature\User;
+namespace Tests\Feature\Admin\User;
 
 use App\Modules\Company\Domain\Services\CompanyService;
 use App\Modules\User\Domain\Mails\ResetUserPasswordMail;
 use App\Modules\User\Domain\Models\User;
-use Tests\TestCaseTenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use Tests\Feature\Admin\TestAdminCase;
 
-class UserCrudTest extends TestCaseTenant
+class UserCrudTest extends TestAdminCase
 {
     use RefreshDatabase;
 

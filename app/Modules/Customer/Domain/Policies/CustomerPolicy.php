@@ -5,6 +5,7 @@ namespace App\Modules\Customer\Domain\Policies;
 use App\Modules\Customer\Domain\Models\Customer;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\User;
+use App\Modules\User\Domain\Models\User as UserModel;
 
 class CustomerPolicy
 {
@@ -30,7 +31,7 @@ class CustomerPolicy
 
     public function viewAny(Authenticatable $authenticated): bool
     {
-        return $authenticated instanceof User;
+        return $authenticated instanceof UserModel;
     }
 
     private function isAuthorizedToManipulate(Authenticatable $authenticated, Customer $customer): bool

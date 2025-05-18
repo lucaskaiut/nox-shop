@@ -5,6 +5,7 @@ namespace App\Modules\Company\Http\Middlewares;
 use App\Modules\Company\Domain\Models\Company;
 use App\Modules\Company\Domain\Services\CompanyService;
 use App\Modules\Core\Domain\Exceptions\NotFoundException;
+use App\Modules\Customer\Domain\Models\Customer;
 use App\Modules\User\Domain\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -66,6 +67,10 @@ class InitializeCompanyMiddleware
         }
 
         $user = User::withoutGlobalScopes()->find($tokenModel->tokenable_id);
+
+        if (!$user) {
+            $user = Customer::withoutGlobalScopes()->find($tokenModel->tokenable_id);
+        }
 
         $company = $user->company()->first();
 

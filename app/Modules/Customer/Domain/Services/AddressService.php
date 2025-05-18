@@ -18,4 +18,14 @@ class AddressService
     {
         return [];
     }
+
+    public function create(array $data): Address
+    {
+        /** @var Customer $customer */
+        $customer = (new CustomerService())->findOrFail($data['customer_id']);
+
+        $address = $customer->addresses()->create(collect($data)->all());
+
+        return $address;
+    }
 }

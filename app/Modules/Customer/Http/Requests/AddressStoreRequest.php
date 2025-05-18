@@ -2,27 +2,29 @@
 
 namespace App\Modules\Customer\Http\Requests;
 
+use App\Modules\Customer\Domain\Models\Customer;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AddressStoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    public function authorize()
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    public function rules()
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'street' => 'required|string|max:255',
+            'number' => 'required|string|max:50',
+            'complement' => 'nullable|string|max:255',
+            'district' => 'required|string|max:255',
+            'postcode' => 'required|string|max:20',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+            'customer_id' => 'required',
         ];
     }
 }

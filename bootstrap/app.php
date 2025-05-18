@@ -2,6 +2,7 @@
 
 use App\Modules\Company\Http\Middlewares\InitializeCompanyMiddleware;
 use App\Modules\Core\Http\Middlewares\HeadersMiddlware;
+use App\Modules\Customer\Http\Middlewares\MergeCustomerMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->prepend(InitializeCompanyMiddleware::class);
         $middleware->prepend(HeadersMiddlware::class);
+        $middleware->append(MergeCustomerMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
