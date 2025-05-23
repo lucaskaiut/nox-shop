@@ -4,11 +4,13 @@ namespace App\Modules\User\Domain\Models;
 
 use App\Modules\Company\Domain\Models\Company;
 use App\Modules\Company\Domain\Scopes\CompanyGlobalScope;
+use App\Modules\Customer\Domain\Models\Customer;
 use App\Modules\User\Domain\Observers\UserObserver;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -66,5 +68,10 @@ class User extends Authenticatable
     protected static function newFactory()
     {
         return UserFactory::new();
+    }
+
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class);
     }
 }

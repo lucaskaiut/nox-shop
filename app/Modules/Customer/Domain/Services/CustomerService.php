@@ -8,6 +8,8 @@ use App\Modules\Core\Domain\Traits\ServiceTrait;
 use App\Modules\Customer\Domain\Mails\NewCustomerMail;
 use App\Modules\Customer\Domain\Mails\ResetCustomerPasswordMail;
 use App\Modules\Customer\Domain\Models\Customer;
+use App\Modules\User\Domain\Models\User;
+use App\Modules\User\Domain\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
@@ -27,11 +29,28 @@ class CustomerService
 
     public function register(array $data): Customer
     {
+        $user = $this->createUser($data);
+
+        unset($data['password']);
+
+        $data['user_id'] = $user->id;
+
         $customer = $this->create($data);
 
         $this->notifyCustomerRegistered($customer);
 
         return $customer;
+    }
+
+    private function createUser(array $data): User
+    {
+        $data = [
+            'name' => $data['first_name'] . ' ' . $data['last_name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ];
+
+        return app(UserService::class)->create($data);
     }
 
     private function notifyCustomerRegistered(Customer $customer): void
@@ -62,11 +81,11 @@ class CustomerService
             throw new NotFoundException('E-mail ou senha inválidos');
         }
 
-        if (!Hash::check($data['password'], $customer->password)) {
+        if (!Hash::check($data['password'], $customer->user()->first()->password)) {
             throw new NotFoundException('E-mail ou senha inválidos');
         }
 
-        $customer->token = $customer->createToken('api')->plainTextToken;
+        $customer->token = $customer->user()->first()->createToken('api')->plainTextToken;
 
         return $customer;
     }

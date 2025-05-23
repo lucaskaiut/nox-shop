@@ -4,44 +4,48 @@ namespace App\Modules\Customer\Domain\Policies;
 
 use App\Modules\Customer\Domain\Models\Customer;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Foundation\Auth\User;
-use App\Modules\User\Domain\Models\User as UserModel;
+use App\Modules\User\Domain\Models\User;
 
 class CustomerPolicy
 {
-    public function create(Authenticatable $authenticated): bool
+    public function create(User $user): bool
     {
-        return $authenticated instanceof User;
+        return $this->isAdmin($user);
     }
 
-    public function update(Authenticatable $authenticated, Customer $customer): bool
+    public function update(User $user, Customer $customer): bool
     {
-        return $this->isAuthorizedToManipulate($authenticated, $customer);
+        return $this->isAuthorizedToManipulate($user, $customer);
     }
 
-    public function delete(Authenticatable $authenticated, Customer $customer): bool
+    public function delete(User $user, Customer $customer): bool
     {
-        return $authenticated instanceof User;
+        return $this->isAdmin($user);
     }
 
-    public function show(Authenticatable $authenticated, Customer $customer): bool
+    public function show(User $user, Customer $customer): bool
     {
-        return $this->isAuthorizedToManipulate($authenticated, $customer);
+        return $this->isAuthorizedToManipulate($user, $customer);
     }
 
-    public function viewAny(Authenticatable $authenticated): bool
+    public function viewAny(User $user): bool
     {
-        return $authenticated instanceof UserModel;
+        return $this->isAdmin($user);
     }
 
-    private function isAuthorizedToManipulate(Authenticatable $authenticated, Customer $customer): bool
+    private function isAuthorizedToManipulate(User $user, Customer $customer): bool
     {
-        $isAdmin = $authenticated instanceof User;
+        $isAdmin = $this->isAdmin($user);
 
         if ($isAdmin) {
-            return $authenticated->company_id === $customer->company_id;
+            return $user->company_id === $customer->company_id;
         }
 
-        return $authenticated->id === $customer->id;
+        return $user->customer()->first()->id === $customer->id;
+    }
+
+    private function isAdmin(User $user): bool
+    {
+        return !$user->customer()->first();
     }
 }

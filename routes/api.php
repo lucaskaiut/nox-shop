@@ -7,9 +7,6 @@ use App\Modules\User\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('teste', function () {
-    dd(auth()->user());
-})->middleware('auth-custom');
 Route::group(['prefix' => 'user', 'controller' => UserController::class], function () {
     Route::post('login', [UserController::class, 'login'])->name('user.login');
     Route::post('forgot-password', [UserController::class, 'sendResetPasswordLink'])->name('user.reset-password');

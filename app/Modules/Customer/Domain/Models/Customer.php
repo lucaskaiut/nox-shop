@@ -4,6 +4,7 @@ namespace App\Modules\Customer\Domain\Models;
 
 use App\Modules\Company\Domain\Models\Company;
 use App\Modules\Customer\Domain\Observers\CustomerObserver;
+use App\Modules\User\Domain\Models\User as ModelsUser;
 use Database\Factories\CustomerFactory;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -18,7 +19,7 @@ use Laravel\Sanctum\HasApiTokens;
 class Customer extends User
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
-    use HasApiTokens, HasFactory, CanResetPassword;
+    use HasFactory;
     
     protected $guarded = [];
 
@@ -53,5 +54,10 @@ class Customer extends User
                 $builder->where('id', $user->id);
             }
         });
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(ModelsUser::class);
     }
 }
