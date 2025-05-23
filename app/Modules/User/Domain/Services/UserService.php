@@ -2,16 +2,17 @@
 
 namespace App\Modules\User\Domain\Services;
 
+use App\Modules\Company\Domain\Scopes\CompanyGlobalScope;
 use App\Modules\Core\Domain\Exceptions\NotFoundException;
 use App\Modules\Core\Domain\Services\MailService;
 use App\Modules\Core\Domain\Traits\ServiceTrait;
 use App\Modules\User\Domain\Mails\ResetUserPasswordMail;
-use App\Modules\User\Domain\Models\PasswordResetToken;
 use App\Modules\User\Domain\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class UserService
 {
@@ -25,6 +26,43 @@ class UserService
     public function hasManyRelations(): array
     {
         return [];
+    }
+    
+    public function create(array $data): User
+    {
+        $collected = collect($data);
+        $relations = $this->hasManyRelations();
+
+        $this->validateDuplicateEntry($collected);
+
+        $user = User::create($collected->except($relations)->all());
+
+        foreach ($relations as $relation) {
+            $this->syncMany($user, $collected->get($relation) ?? [], Str::camel($relation));
+        }
+            
+        return $user;
+    }
+
+    public function update(User|int $user, array $data): User
+    {
+        if (is_int($user)) {
+            $user = User::query()->lockForUpdate()->findOrFail($user);
+        }
+
+        $collected = collect($data);
+
+        $this->validateDuplicateEntry($collected, $user);
+
+        $relations = $this->hasManyRelations();
+        
+        $user->update($collected->except($relations)->all());
+
+        foreach ($relations as $relation) {
+            $this->syncMany($user, $collected->get($relation) ?? [], Str::camel($relation));
+        }
+
+        return $user->refresh();
     }
 
     public function login(array $data): User
@@ -51,10 +89,6 @@ class UserService
         if (!$user) {
             throw new NotFoundException('Usuário não encontrado');
         }
-
-        // $rawToken = (string) Str::uuid();
-
-        // PasswordResetToken::create(['email' => $email, 'token' => Hash::make($rawToken)]);
 
         $token = Password::createToken($user);
 
@@ -89,4 +123,36 @@ class UserService
 
         $user->update(['password' => Hash::make($data['password'])]);
     }
+
+    private function validateDuplicateEntry(Collection $collected, ?User $user = null): void
+    {
+        $exists = null;
+
+        if ($collected->get('type')) {
+            $exists = $this->findOneBy(['email' => $collected->get('email'), 'type' => 'customer']);
+        }
+
+        if (!$collected->get('type')) {
+            $exists = User::withoutGlobalScope(CompanyGlobalScope::class)
+                ->where('email', $collected->get('email'))
+                ->where('type', 'admin')
+                ->first();
+        }
+
+        if (!$exists) {
+            return;
+        }
+
+        if ($user && $exists->id == $user->id) {
+            return;
+        }
+        
+        $this->handleDuplicateEntry();
+    }
+
+    private function handleDuplicateEntry(): void
+    {
+        throw new UnprocessableEntityHttpException('Já existe um registro com esse e-mail.');
+    }
+
 }

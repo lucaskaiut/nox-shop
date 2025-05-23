@@ -12,6 +12,8 @@ use App\Modules\User\Domain\Models\User;
 use App\Modules\User\Domain\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class CustomerService
 {
@@ -25,6 +27,49 @@ class CustomerService
     public function hasManyRelations(): array
     {
         return [];
+    }
+
+    public function create(array $data): Customer
+    {
+        $collected = collect($data);
+        $relations = $this->hasManyRelations();
+
+        $exists = $this->findOneBy(['email' => $data['email']]);
+
+        if ($exists) {
+            $this->handleDuplicateEntry();
+        }
+
+        $customer = Customer::create($collected->except($relations)->all());
+
+        foreach ($relations as $relation) {
+            $this->syncMany($customer, $collected->get($relation) ?? [], Str::camel($relation));
+        }
+            
+        return $customer;
+    }
+
+    public function update(Customer|int $customer, array $data): Customer
+    {
+        if (is_int($customer)) {
+            $customer = Customer::query()->lockForUpdate()->findOrFail($customer);
+        }
+
+        $exists = $this->findOneBy(['email' => $data['email']]);
+
+        if ($exists && $exists->id != $customer->id) {
+            $this->handleDuplicateEntry();
+        }
+
+        $collected = collect($data);
+        $relations = $this->hasManyRelations();
+        $customer->update($collected->except($relations)->all());
+
+        foreach ($relations as $relation) {
+            $this->syncMany($customer, $collected->get($relation) ?? [], Str::camel($relation));
+        }
+
+        return $customer->refresh();
     }
 
     public function register(array $data): Customer
@@ -130,5 +175,10 @@ class CustomerService
         }
 
         $customer->update(['password' => Hash::make($data['password'])]);
+    }
+
+    private function handleDuplicateEntry(): void
+    {
+        throw new UnprocessableEntityHttpException('Já existe um cadastro com o e-mail informado.');
     }
 }

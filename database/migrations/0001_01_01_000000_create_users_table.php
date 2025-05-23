@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->string('name');
             $table->string('email')->unique();
+            $table->enum('type', ['customer', 'admin'])->default('admin');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
