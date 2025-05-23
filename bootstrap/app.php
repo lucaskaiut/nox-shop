@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Company\Http\Middlewares\InitializeCompanyMiddleware;
+use App\Modules\Core\Http\Middlewares\CustomAuthMiddleware;
 use App\Modules\Core\Http\Middlewares\HeadersMiddlware;
 use App\Modules\Customer\Http\Middlewares\MergeCustomerMiddleware;
 use Illuminate\Foundation\Application;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(InitializeCompanyMiddleware::class);
         $middleware->prepend(HeadersMiddlware::class);
         $middleware->append(MergeCustomerMiddleware::class);
+        $middleware->alias(['auth-custom' => CustomAuthMiddleware::class]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

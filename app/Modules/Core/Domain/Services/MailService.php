@@ -22,6 +22,8 @@ class MailService
     {
         $class = $this->mailable;
 
+        $this->data['domain'] = app('company')->company()->domain;
+
         $mailable = new $class($this->data, $this->getMailConfig());
 
         Mail::to($this->to)->queue($mailable);

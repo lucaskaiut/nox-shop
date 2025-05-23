@@ -5,6 +5,9 @@ namespace App\Modules\Customer\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Customer\Domain\Models\Customer;
 use App\Modules\Customer\Domain\Services\CustomerService;
+use App\Modules\Customer\Http\Requests\CustomerCreateResetPasswordRequest;
+use App\Modules\Customer\Http\Requests\CustomerLoginRequest;
+use App\Modules\Customer\Http\Requests\CustomerResetPasswordRequest;
 use App\Modules\Customer\Http\Requests\CustomerStoreRequest;
 use App\Modules\Customer\Http\Requests\CustomerUpdateRequest;
 use App\Modules\Customer\Http\Resources\CustomerCollection;
@@ -72,6 +75,27 @@ class CustomerController extends Controller
     {
         return DB::transaction(function () use ($request) {
             return (new CustomerResource($this->service->register($request->validated())))->response()->setStatusCode(201);
+        });
+    }
+
+    public function login(CustomerLoginRequest $request)
+    {
+        return DB::transaction(function () use ($request) {
+            return (new CustomerResource($this->service->login($request->validated())));
+        });
+    }
+    
+    public function sendResetPasswordLink(CustomerCreateResetPasswordRequest $request)
+    {
+        DB::transaction(function () use ($request) {
+            $this->service->createPasswordReset(collect($request->validated())->get('email'));
+        });
+    }
+
+    public function resetPassword(CustomerResetPasswordRequest $request)
+    {
+        DB::transaction(function () use ($request) {
+            $this->service->resetPassword($request->validated());
         });
     }
 }

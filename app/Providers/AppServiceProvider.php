@@ -4,10 +4,14 @@ namespace App\Providers;
 
 use App\Modules\Company\Domain\Models\Company;
 use App\Modules\Company\Domain\Policies\CompanyPolicy;
+use App\Modules\Customer\Domain\Models\Customer;
+use App\Modules\Customer\Domain\Policies\CustomerPolicy;
 use App\Modules\User\Domain\Models\User;
 use App\Modules\User\Domain\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +30,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Company::class, CompanyPolicy::class);
+        Gate::policy(Customer::class, CustomerPolicy::class);
     }
 }

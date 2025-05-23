@@ -11,105 +11,105 @@ class CustomerCrudTest extends TestWebsiteCase
 {
     use RefreshDatabase;
 
-    // public function test_can_create_customer()
-    // {
-    //     $response = $this->postJson('/api/customer/register', [
-    //         'first_name' => 'Lucas',
-    //         'last_name' => 'Kaiut',
-    //         'email' => 'lucas@example.com',
-    //         'password' => 'password',
-    //         'type' => 'person',
-    //         'document' => '12345678900',
-    //         'birthdate' => '2000-01-01',
-    //     ]);
+    public function test_can_create_customer()
+    {
+        $response = $this->postJson('/api/customer/register', [
+            'first_name' => 'Lucas',
+            'last_name' => 'Kaiut',
+            'email' => 'lucas@example.com',
+            'password' => 'password',
+            'type' => 'person',
+            'document' => '12345678900',
+            'birthdate' => '2000-01-01',
+        ]);
 
-    //     $response->assertStatus(201);
+        $response->assertStatus(201);
 
-    //     $this->assertDatabaseHas('customers', [
-    //         'email' => 'lucas@example.com',
-    //         'company_id' => $this->company->id,
-    //     ]);
-    // }
+        $this->assertDatabaseHas('customers', [
+            'email' => 'lucas@example.com',
+            'company_id' => $this->company->id,
+        ]);
+    }
 
-    // public function test_cant_list_customers()
-    // {
-    //     $response = $this->getJson('/api/customer');
+    public function test_cant_list_customers()
+    {
+        $response = $this->getJson('/api/customer');
 
-    //     $response->assertStatus(403);
-    // }
+        $response->assertStatus(403);
+    }
 
-    // public function test_can_show_customer()
-    // {
-    //     $response = $this->getJson("/api/customer/{$this->authUser->id}");
+    public function test_can_show_customer()
+    {
+        $response = $this->getJson("/api/customer/{$this->authUser->id}");
 
-    //     $response->assertStatus(200)
-    //         ->assertJsonFragment(['email' => $this->authUser->email]);
-    // }
+        $response->assertStatus(200)
+            ->assertJsonFragment(['email' => $this->authUser->email]);
+    }
 
-    // public function test_cant_show_other_customer()
-    // {
-    //     $customer = Customer::factory()->create(['company_id' => $this->company->id]);
+    public function test_cant_show_other_customer()
+    {
+        $customer = Customer::factory()->create(['company_id' => $this->company->id]);
 
-    //     $response = $this->getJson("/api/customer/{$customer->id}");
+        $response = $this->getJson("/api/customer/{$customer->id}");
 
-    //     $response->assertStatus(404);
-    // }
+        $response->assertStatus(404);
+    }
 
-    // public function test_cant_update_other_customer()
-    // {
-    //     $customer = Customer::factory()->create(['company_id' => $this->company->id]);
+    public function test_cant_update_other_customer()
+    {
+        $customer = Customer::factory()->create(['company_id' => $this->company->id]);
 
-    //     $response = $this->putJson("/api/customer/{$customer->id}", [
-    //         'first_name' => 'Atualizado',
-    //         'last_name' => 'Silva',
-    //         'email' => 'atualizado@example.com',
-    //         'type' => 'company',
-    //         'document' => '12345678000199',
-    //         'birthdate' => '1995-05-20',
-    //     ]);
+        $response = $this->putJson("/api/customer/{$customer->id}", [
+            'first_name' => 'Atualizado',
+            'last_name' => 'Silva',
+            'email' => 'atualizado@example.com',
+            'type' => 'company',
+            'document' => '12345678000199',
+            'birthdate' => '1995-05-20',
+        ]);
 
-    //     $response->assertStatus(404);
-    // }
+        $response->assertStatus(404);
+    }
 
-    // public function test_can_update_customer()
-    // {
-    //     $response = $this->putJson("/api/customer/{$this->authUser->id}", [
-    //         'first_name' => 'Atualizado',
-    //         'last_name' => 'Silva',
-    //         'email' => 'atualizado@example.com',
-    //         'type' => 'company',
-    //         'document' => '12345678000199',
-    //         'birthdate' => '1995-05-20',
-    //     ]);
+    public function test_can_update_customer()
+    {
+        $response = $this->putJson("/api/customer/{$this->authUser->id}", [
+            'first_name' => 'Atualizado',
+            'last_name' => 'Silva',
+            'email' => 'atualizado@example.com',
+            'type' => 'company',
+            'document' => '12345678000199',
+            'birthdate' => '1995-05-20',
+        ]);
 
-    //     $response->assertStatus(200);
+        $response->assertStatus(200);
 
-    //     $this->assertDatabaseHas('customers', [
-    //         'id' => $this->authUser->id,
-    //         'first_name' => 'Atualizado',
-    //         'email' => 'atualizado@example.com',
-    //     ]);
-    // }
+        $this->assertDatabaseHas('customers', [
+            'id' => $this->authUser->id,
+            'first_name' => 'Atualizado',
+            'email' => 'atualizado@example.com',
+        ]);
+    }
 
-    // public function test_cant_delete_other_customer()
-    // {
-    //     $customer = Customer::factory()->create(['company_id' => $this->company->id]);
+    public function test_cant_delete_other_customer()
+    {
+        $customer = Customer::factory()->create(['company_id' => $this->company->id]);
 
-    //     $response = $this->deleteJson("/api/customer/{$customer->id}");
+        $response = $this->deleteJson("/api/customer/{$customer->id}");
 
-    //     $response->assertStatus(404);
-    // }
+        $response->assertStatus(404);
+    }
 
-    // public function test_can_delete_customer()
-    // {
-    //     $response = $this->deleteJson("/api/customer/{$this->authUser->id}");
+    public function test_can_delete_customer()
+    {
+        $response = $this->deleteJson("/api/customer/{$this->authUser->id}");
 
-    //     $response->assertStatus(204);
+        $response->assertStatus(204);
 
-    //     $this->assertDatabaseMissing('customers', [
-    //         'id' => $this->authUser->id,
-    //     ]);
-    // }
+        $this->assertDatabaseMissing('customers', [
+            'id' => $this->authUser->id,
+        ]);
+    }
 
     public function test_cant_add_address_to_other_customer()
     {

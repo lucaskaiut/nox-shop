@@ -1,0 +1,1 @@
+<p>Para redefinir sua senha, clique <a href="https://{{ $data['domain'] }}/{{ $data['token'] }}" target="_blank">aqui</a></p>

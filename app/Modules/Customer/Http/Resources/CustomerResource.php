@@ -24,6 +24,7 @@ class CustomerResource extends JsonResource
             'birthdate' => $this->birthdate,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            $this->mergeWhen(!!$this->token, ['token' => $this->token]),
         ];
     }
 }
