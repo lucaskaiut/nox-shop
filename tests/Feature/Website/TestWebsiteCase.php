@@ -2,8 +2,7 @@
 
 namespace Tests\Feature\Website;
 
-use App\Modules\Customer\Domain\Models\Customer;
-use Illuminate\Support\Facades\Hash;
+use App\Modules\Customer\Domain\Services\CustomerService;
 use Tests\TestCaseTenant;
 
 abstract class TestWebsiteCase extends TestCaseTenant
@@ -14,16 +13,16 @@ abstract class TestWebsiteCase extends TestCaseTenant
     {
         parent::setUp();
 
-        $this->authUser = Customer::create([
+        $this->authUser = app(CustomerService::class)->create([
             'company_id' => $this->company->id,
             'first_name' => 'Fulano',
-            'last_name' => ' de Tal',
+            'last_name' => 'de Tal',
             'type' => 'person',
             'document' => '99999999999',
             'email' => 'fulanodetal@lojateste.com',
-            'password' => Hash::make('abc@123'),
+            'password' => 'abc@123',
             'birthdate' => '1999-03-31',
-        ]);
+        ])->user()->first();
 
         $token = $this->authUser->createToken('testing')->plainTextToken;
 

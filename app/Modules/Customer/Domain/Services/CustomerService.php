@@ -74,28 +74,11 @@ class CustomerService
 
     public function register(array $data): Customer
     {
-        $user = $this->createUser($data);
-
-        unset($data['password']);
-
-        $data['user_id'] = $user->id;
-
         $customer = $this->create($data);
 
         $this->notifyCustomerRegistered($customer);
 
         return $customer;
-    }
-
-    private function createUser(array $data): User
-    {
-        $data = [
-            'name' => $data['first_name'] . ' ' . $data['last_name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-        ];
-
-        return app(UserService::class)->create($data);
     }
 
     private function notifyCustomerRegistered(Customer $customer): void

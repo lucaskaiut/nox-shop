@@ -40,10 +40,10 @@ class CustomerCrudTest extends TestWebsiteCase
 
     public function test_can_show_customer()
     {
-        $response = $this->getJson("/api/customer/{$this->authUser->id}");
+        $response = $this->getJson("/api/customer/{$this->authUser->customer()->first()->id}");
 
         $response->assertStatus(200)
-            ->assertJsonFragment(['email' => $this->authUser->email]);
+            ->assertJsonFragment(['email' => $this->authUser->customer()->first()->email]);
     }
 
     public function test_cant_show_other_customer()
@@ -52,7 +52,7 @@ class CustomerCrudTest extends TestWebsiteCase
 
         $response = $this->getJson("/api/customer/{$customer->id}");
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
     }
 
     public function test_cant_update_other_customer()
@@ -68,12 +68,12 @@ class CustomerCrudTest extends TestWebsiteCase
             'birthdate' => '1995-05-20',
         ]);
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
     }
 
     public function test_can_update_customer()
     {
-        $response = $this->putJson("/api/customer/{$this->authUser->id}", [
+        $response = $this->putJson("/api/customer/{$this->authUser->customer()->first()->id}", [
             'first_name' => 'Atualizado',
             'last_name' => 'Silva',
             'email' => 'atualizado@example.com',
@@ -85,7 +85,7 @@ class CustomerCrudTest extends TestWebsiteCase
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('customers', [
-            'id' => $this->authUser->id,
+            'id' => $this->authUser->customer()->first()->id,
             'first_name' => 'Atualizado',
             'email' => 'atualizado@example.com',
         ]);
@@ -97,17 +97,17 @@ class CustomerCrudTest extends TestWebsiteCase
 
         $response = $this->deleteJson("/api/customer/{$customer->id}");
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
     }
 
     public function test_can_delete_customer()
     {
-        $response = $this->deleteJson("/api/customer/{$this->authUser->id}");
+        $response = $this->deleteJson("/api/customer/{$this->authUser->customer()->first()->id}");
 
         $response->assertStatus(204);
 
         $this->assertDatabaseMissing('customers', [
-            'id' => $this->authUser->id,
+            'id' => $this->authUser->customer()->first()->id,
         ]);
     }
 
@@ -128,7 +128,7 @@ class CustomerCrudTest extends TestWebsiteCase
             'customer_id' => $customer->id,
         ]);
 
-        $response->assertStatus(201)->assertJsonFragment(['customer_id' => $this->authUser->id]);
+        $response->assertStatus(201)->assertJsonFragment(['customer_id' => $this->authUser->customer()->first()->id]);
     }
 
     public function test_can_add_address_to_customer()
@@ -143,13 +143,13 @@ class CustomerCrudTest extends TestWebsiteCase
             'city' => 'São Paulo',
             'state' => 'SP',
             'country' => 'BR',
-            'customer_id' => $this->authUser->id,
+            'customer_id' => $this->authUser->customer()->first()->id,
         ]);
 
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('addresses', [
-            'customer_id' => $this->authUser->id,
+            'customer_id' => $this->authUser->customer()->first()->id,
             'name' => 'Casa',
         ]);
     }
@@ -167,7 +167,7 @@ class CustomerCrudTest extends TestWebsiteCase
 
     public function test_can_list_customer_addresses()
     {
-        Address::factory()->count(2)->create(['customer_id' => $this->authUser->id]);
+        Address::factory()->count(2)->create(['customer_id' => $this->authUser->customer()->first()->id]);
 
         $response = $this->getJson("/api/address");
 
@@ -177,7 +177,7 @@ class CustomerCrudTest extends TestWebsiteCase
 
     public function test_can_update_customer_address()
     {
-        $address = Address::factory()->create(['customer_id' => $this->authUser->id]);
+        $address = Address::factory()->create(['customer_id' => $this->authUser->customer()->first()->id]);
 
         $response = $this->putJson("/api/address/{$address->id}", [
             'name' => 'Trabalho',
@@ -217,12 +217,12 @@ class CustomerCrudTest extends TestWebsiteCase
             'customer_id' => $customer->id,
         ]);
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
     }
 
     public function test_can_delete_customer_address()
     {
-        $address = Address::factory()->create(['customer_id' => $this->authUser->id]);
+        $address = Address::factory()->create(['customer_id' => $this->authUser->customer()->first()->id]);
 
         $response = $this->deleteJson("/api/address/{$address->id}");
 
@@ -240,6 +240,6 @@ class CustomerCrudTest extends TestWebsiteCase
 
         $response = $this->deleteJson("/api/address/{$address->id}");
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
     }
 }
