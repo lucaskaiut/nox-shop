@@ -2,9 +2,13 @@
 
 namespace Tests\Feature\Website\Customer;
 
+use App\Modules\Customer\Domain\Mails\NewCustomerMail;
+use App\Modules\Customer\Domain\Mails\ResetCustomerPasswordMail;
 use App\Modules\Customer\Domain\Models\Customer;
 use App\Modules\Customer\Domain\Models\Address;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Tests\Feature\Website\TestWebsiteCase;
 
 class CustomerCrudTest extends TestWebsiteCase
@@ -13,6 +17,8 @@ class CustomerCrudTest extends TestWebsiteCase
 
     public function test_can_create_customer()
     {
+        Mail::fake();
+
         $response = $this->postJson('/api/customer/register', [
             'first_name' => 'Lucas',
             'last_name' => 'Kaiut',
@@ -24,6 +30,10 @@ class CustomerCrudTest extends TestWebsiteCase
         ]);
 
         $response->assertStatus(201);
+
+        Mail::assertQueued(NewCustomerMail::class, function ($mail) {
+            return $mail->hasTo(config('mail.always_to'));
+        });
 
         $this->assertDatabaseHas('customers', [
             'email' => 'lucas@example.com',
@@ -229,5 +239,41 @@ class CustomerCrudTest extends TestWebsiteCase
         $response = $this->deleteJson("/api/address/{$address->id}");
 
         $response->assertStatus(404);
+    }
+
+    public function test_can_create_reset_password()
+    {
+        Mail::fake();
+
+        $response = $this->postJson("/api/customer/forgot-password", [
+            'email' => $this->authUser->email,
+        ]);
+
+        $response->assertStatus(200);
+
+        Mail::assertQueued(ResetCustomerPasswordMail::class, function ($mail) {
+            return $mail->hasTo(config('mail.always_to'));
+        });
+    }
+
+    public function test_can_reset_password()
+    {
+        $token = Password::createToken($this->authUser);
+
+        $response = $this->postJson("api/customer/reset-password", [
+            'email' => $this->authUser->email,
+            'token' => $token,
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(200);
+
+        $response = $this->postJson("api/customer/login", [
+            'email' => $this->authUser->email,
+            'password' => 'password',
+            'login_type' => 'email',
+        ]);
+
+        $response->assertStatus(200);
     }
 }

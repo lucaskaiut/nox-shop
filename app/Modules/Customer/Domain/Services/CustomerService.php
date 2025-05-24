@@ -126,7 +126,7 @@ class CustomerService
             throw new NotFoundException('Usuário não encontrado');
         }
 
-        $token = Password::createToken($customer);
+        $token = Password::createToken($customer->user()->first());
 
         $this->sendPasswordReset($token, $customer);
     }
@@ -151,13 +151,17 @@ class CustomerService
             throw new NotFoundException('Cadastro não encontrado');
         }
 
-        $isValid = Password::getRepository()->exists($customer, $data['token']);
+        $isValid = Password::getRepository()->exists($customer->user()->first(), $data['token']);
 
         if (!$isValid) {
             throw new NotFoundException('Cadastro não encontrato');
         }
 
-        $customer->update(['password' => Hash::make($data['password'])]);
+        $hashedPassword = Hash::make($data['password']);
+
+        app(UserService::class)->update($customer->user()->first(), ['password' => $hashedPassword]);
+        
+        $customer->update(['password' => $hashedPassword]);
     }
 
     private function handleDuplicateEntry(): void
