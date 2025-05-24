@@ -47,7 +47,7 @@ final class AttributesGroupCrudTest extends TestAdminCase
 
         $response->assertStatus(200);
 
-        $this->assertDatabaseHas('attributes_group', [
+        $this->assertDatabaseHas('attributes_groups', [
             'id' => $attributesGroup->id,
             'name' => 'Teste atualizado',
         ]);
@@ -61,7 +61,7 @@ final class AttributesGroupCrudTest extends TestAdminCase
 
         $response->assertStatus(204);
 
-        $this->assertDatabaseMissing('attributes_group', [
+        $this->assertDatabaseMissing('attributes_groups', [
             'id' => $attributesGroup->id,
         ]);
     }
