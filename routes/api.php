@@ -3,6 +3,7 @@
 use App\Modules\Company\Http\Controllers\CompanyController;
 use App\Modules\Customer\Http\Controllers\AddressController;
 use App\Modules\Customer\Http\Controllers\CustomerController;
+use App\Modules\Product\Http\Controllers\AttributesGroupController;
 use App\Modules\User\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,5 +24,11 @@ Route::group(['middleware' => 'auth:sanctum',], function () {
     Route::put('company', [CompanyController::class, 'update'])->name('company.update');
     Route::get('company', [CompanyController::class, 'show'])->name('company.show');
     Route::resource('address', AddressController::class)->parameters(['address' => 'id'])->except(['create', 'edit']);
+    Route::post('attributes-group', [AttributesGroupController::class, 'store'])->name('attributes-group.store');
+    Route::put('attributes-group/{id}', [AttributesGroupController::class, 'update'])->name('attributes-group.update');
+    Route::delete('attributes-group/{id}', [AttributesGroupController::class, 'destroy'])->name('attributes-group.destroy');
 });
+
+Route::get('attributes-group', [AttributesGroupController::class, 'index'])->name('attributes-group.index');
+Route::get('attributes-group/{id}', [AttributesGroupController::class, 'show'])->name('attributes-group.name');
 Route::post('customer/register', [CustomerController::class, 'register'])->name('customer.register');
