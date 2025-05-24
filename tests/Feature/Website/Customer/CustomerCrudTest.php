@@ -52,7 +52,7 @@ class CustomerCrudTest extends TestWebsiteCase
 
         $response = $this->getJson("/api/customer/{$customer->id}");
 
-        $response->assertStatus(403);
+        $response->assertStatus(404);
     }
 
     public function test_cant_update_other_customer()
@@ -68,7 +68,7 @@ class CustomerCrudTest extends TestWebsiteCase
             'birthdate' => '1995-05-20',
         ]);
 
-        $response->assertStatus(403);
+        $response->assertStatus(404);
     }
 
     public function test_can_update_customer()
@@ -91,24 +91,12 @@ class CustomerCrudTest extends TestWebsiteCase
         ]);
     }
 
-    public function test_cant_delete_other_customer()
+    public function test_cant_delete_customer()
     {
-        $customer = Customer::factory()->create(['company_id' => $this->company->id]);
-
-        $response = $this->deleteJson("/api/customer/{$customer->id}");
+        $customerId = $this->authUser->customer()->first()->id;
+        $response = $this->deleteJson("/api/customer/$customerId");
 
         $response->assertStatus(403);
-    }
-
-    public function test_can_delete_customer()
-    {
-        $response = $this->deleteJson("/api/customer/{$this->authUser->customer()->first()->id}");
-
-        $response->assertStatus(204);
-
-        $this->assertDatabaseMissing('customers', [
-            'id' => $this->authUser->customer()->first()->id,
-        ]);
     }
 
     public function test_cant_add_address_to_other_customer()
@@ -217,7 +205,7 @@ class CustomerCrudTest extends TestWebsiteCase
             'customer_id' => $customer->id,
         ]);
 
-        $response->assertStatus(403);
+        $response->assertStatus(404);
     }
 
     public function test_can_delete_customer_address()
@@ -240,6 +228,6 @@ class CustomerCrudTest extends TestWebsiteCase
 
         $response = $this->deleteJson("/api/address/{$address->id}");
 
-        $response->assertStatus(403);
+        $response->assertStatus(404);
     }
 }

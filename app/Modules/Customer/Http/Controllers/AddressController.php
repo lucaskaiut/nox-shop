@@ -33,12 +33,6 @@ class AddressController extends Controller
     {
         $this->authorize('create', Address::class);
 
-        // $data = $request->validated();
-
-        // if (auth('sanctum')->user() instanceof Customer) {
-        //     $data['customer_id'] = auth('sanctum')->user()->id;
-        // }
-
         return DB::transaction(function () use ($request) {
             return (new AddressResource($this->service->create($request->validated())))->response()->setStatusCode(201);
         });

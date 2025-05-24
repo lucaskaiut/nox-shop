@@ -16,8 +16,15 @@ class MergeCustomerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth('sanctum')->user() instanceof Customer) {
-            $request->request->set('customer_id', auth('sanctum')->user()->id);
+        /** @var User $user */
+        $user = auth('sanctum')->user();
+
+        if (!$user) {
+            return $next($request);
+        }
+
+        if ($user->customer()->first()) {
+            $request->request->set('customer_id', $user->customer()->first()->id);
         }
 
         return $next($request);

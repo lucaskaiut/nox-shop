@@ -4,19 +4,17 @@ namespace App\Modules\Customer\Domain\Models;
 
 use App\Modules\Company\Domain\Models\Company;
 use App\Modules\Customer\Domain\Observers\CustomerObserver;
-use App\Modules\User\Domain\Models\User as ModelsUser;
+use App\Modules\User\Domain\Models\User;
 use Database\Factories\CustomerFactory;
-use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\Sanctum\HasApiTokens;
 
 #[ObservedBy(CustomerObserver::class)]
-class Customer extends User
+class Customer extends Model
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
     use HasFactory;
@@ -48,16 +46,23 @@ class Customer extends User
     protected static function booted()
     {
         static::addGlobalScope('customer_owner', function (Builder $builder) {
+            /** @var User $user */
             $user = auth('sanctum')->user();
 
-            if ($user instanceof Customer) {
-                $builder->where('id', $user->id);
+            if (!$user) {
+                return;
+            }
+
+            $customerId = Customer::withoutGlobalScopes()->where('user_id', $user->id)->value('id');
+
+            if ($customerId) {
+                $builder->where('id', $customerId);
             }
         });
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(ModelsUser::class);
+        return $this->belongsTo(User::class);
     }
 }

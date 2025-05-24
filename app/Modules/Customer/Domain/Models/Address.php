@@ -26,10 +26,11 @@ class Address extends Model
     protected static function booted()
     {
         static::addGlobalScope('address_owner', function (Builder $builder) {
+            /** @var User $user */
             $user = auth('sanctum')->user();
 
-            if ($user instanceof Customer) {
-                $builder->where('customer_id', $user->id);
+            if ($user->customer()->first()) {
+                $builder->where('customer_id', $user->customer()->first()->id);
             }
         });
     }
